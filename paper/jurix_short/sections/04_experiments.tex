@@ -1,0 +1,51 @@
+\section{Experiments and Evaluation}
+\label{sec:experiments}
+
+We evaluate three LLMs as predicate extractors - DeepSeek V3.2, GPT-OSS 120B, and Gemma 4 31B - on the 94-instance \texttt{hearsay} subset, under three configurations: \textbf{Naive} direct prompting for a binary verdict, \textbf{Chain-of-Thought (CoT)}, and \textbf{Neuro-symbolic (Ours)}, where the LLM only extracts the five predicates for the PYTHEN rule tree (Eq.~\ref{eq:hearsay-rule}). The Neuro-symbolic pipeline improves F1-score over both baselines for all three models (e.g., from 0.725 under CoT to 0.813 for GPT-OSS 120B) and is the only configuration in which every model's accuracy exceeds 0.77. Feeding the manually annotated gold predicate table directly into the rule tree, bypassing $\mathcal{E}$ entirely, yields Accuracy = Precision = Recall = $F_1 = 1.0$: the rule tree is logically sound with respect to this dataset, so all residual error of the Neuro-symbolic pipeline is attributable to the extraction step $\mathcal{E}$, licensing the intervention analysis below.
+
+Table~\ref{tab:dir} applies the intervention procedure to every predicate error produced by each model, reporting the standalone extraction $F_1$ (over all $470$ predicate slots) alongside the resulting Decision Impact Rate (DIR); subscripts give the number of erroneous slots each DIR is computed over. \textit{is\_written\_assertion} is the hardest predicate to extract for every model ($F_1 \in [0.286, 0.429]$) and simultaneously has, by a wide margin, the highest DIR (0.700-0.900): nearly every time a model gets this predicate wrong, that error flips the final decision. \textit{is\_non\_verbal\_assertive\_conduct} has comparably low $F_1$ (0.593-0.667) but the lowest DIR of all five predicates (0.000-0.091), since its errors are almost always structurally redundant, absorbed whenever \textit{is\_oral\_assertion} or \textit{is\_written\_assertion} already satisfies the disjunctive clause. The two conjunctive gates, \textit{is\_out\_of\_court} and \textit{is\_introduced\_to\_prove\_truth}, are extracted comparatively well yet carry disproportionate DIR (up to 1.000 and 0.875, respectively) because a conjunctive condition has no disjunctive backup to absorb a mistake. Overall, extraction difficulty ($1-F_1$) correlates weakly or negatively with DIR for four of the five predicates, and strongly positively only for \textit{is\_written\_assertion} - a predicate that is both hard to extract and disproportionately consequential when wrong, making it the clearest target for extractor improvement.
+
+\begin{table}[htbp]
+\centering
+\small
+\caption{Decision Impact Rate (DIR) versus extraction F1 by predicate and model. Subscripts denote the number of observed errors the DIR is computed over.}
+\label{tab:dir}
+\begin{tabular}{lcccccc}
+\toprule
+& \multicolumn{2}{c}{\textbf{DeepSeek V3.2}} & \multicolumn{2}{c}{\textbf{GPT-OSS 120B}} & \multicolumn{2}{c}{\textbf{Gemma 4 31B}} \\
+\textbf{Predicate} & F1 & DIR & F1 & DIR & F1 & DIR \\
+\midrule
+is\_oral\_assertion                 & 0.897 & $0.182_{(11)}$ & 0.929 & $0.125_{(8)}$  & 0.957 & $0.200_{(5)}$  \\
+is\_written\_assertion              & 0.286 & $\mathbf{0.700_{(10)}}$ & 0.429 & $\mathbf{0.875_{(8)}}$  & 0.375 & $\mathbf{0.900_{(10)}}$ \\
+is\_non\_verbal\_assertive\_conduct & 0.593 & $0.091_{(11)}$ & 0.667 & $0.000_{(9)}$  & 0.667 & $0.000_{(8)}$  \\
+is\_out\_of\_court                  & 0.910 & $0.167_{(12)}$ & 0.877 & $0.188_{(16)}$ & 0.976 & $1.000_{(3)}$  \\
+is\_introduced\_to\_prove\_truth    & 0.760 & $0.621_{(29)}$ & 0.744 & $0.394_{(33)}$ & 0.864 & $0.875_{(16)}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Table~\ref{tab:taxonomy} applies the impact label to every E1-E3 extraction error over the 470 predicate slots, showing that the same nominal error type carries different practical risk across models. Hallucinated predicates (E1) are decision-critical only 59.5\% and 46.9\% of the time for DeepSeek V3.2 and GPT-OSS 120B, respectively - close to half of these errors are absorbed by the rule tree's disjunctive structure and never affect the output - whereas 96.2\% of Gemma 4 31B's E1 errors are decision-critical, despite hallucinating about as often in absolute terms, because it rarely hallucinates an already-redundant predicate. Omission errors (E2) are critical far less often across all three models (4.0-13.8\%), indicating that a missed predicate is disproportionately likely to be one the decision did not depend on - an asymmetry not visible from raw E1/E2 frequency counts alone. E3 (invalid reference) is negligible in frequency (at most 2 slots) and is included in the table for completeness only.
+
+\begin{table}[htbp]
+\centering
+\small
+\caption{Refined error taxonomy: critical vs.\ benign extraction errors by model, out of 470 predicate slots.}
+\label{tab:taxonomy}
+\begin{tabular}{llccc}
+\toprule
+\textbf{Error Type} & \textbf{Impact} & \textbf{DeepSeek V3.2} & \textbf{GPT-OSS 120B} & \textbf{Gemma 4 31B} \\
+\midrule
+\multirow{3}{*}{E1: Hallucination} & Critical & 25 (5.32\%) & 23 (4.89\%) & 25 (5.32\%) \\
+                                    & Benign   & 17 (3.62\%) & 26 (5.53\%) & 1 (0.21\%) \\
+                                    & \% Critical & 59.5\% & 46.9\% & \textbf{96.2\%} \\
+\midrule
+\multirow{3}{*}{E2: Omission}      & Critical & 4 (0.85\%) & 1 (0.21\%) & 2 (0.43\%) \\
+                                    & Benign   & 25 (5.32\%) & 24 (5.11\%) & 14 (2.98\%) \\
+                                    & \% Critical & 13.8\% & 4.0\% & 12.5\% \\
+\midrule
+\multirow{3}{*}{E3: Invalid Ref.}   & Critical & 1 (0.21\%) & 0 (0.00\%) & 0 (0.00\%) \\
+                                    & Benign   & 1 (0.21\%) & 0 (0.00\%) & 0 (0.00\%) \\
+                                    & \% Critical & 50.0\% & - & - \\
+\bottomrule
+\end{tabular}
+\end{table}

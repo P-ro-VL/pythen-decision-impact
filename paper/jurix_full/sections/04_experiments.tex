@@ -1,0 +1,130 @@
+\section{Experiments and Evaluation}
+\label{sec:experiments}
+
+\subsection{Experimental Setup}
+\label{subsec:setup}
+We evaluate three LLMs as predicate extractors, which are DeepSeek V3.2, GPT-OSS 120B, and Gemma 4 31B, on the 94-instance \texttt{hearsay} subset of LegalBench described in Section~\ref{subsec:task}, against the manually annotated gold predicate table. Each model is evaluated under three pipeline configurations: \textbf{Naive}, where the LLM is prompted directly for a binary hearsay verdict; \textbf{Chain-of-Thought (CoT)}, where the LLM produces a free-form chain-of-thought before its verdict; and \textbf{Neuro-symbolic (Ours)}, where the LLM only extracts the five predicates of Section~\ref{subsec:task}, which are then passed to the PYTHEN rule tree (Equation~\ref{eq:hearsay-rule}) to obtain the final decision.
+
+\subsection{Baseline Context}
+\label{subsec:overall}
+Table~\ref{tab:baseline-comparison} reports the full comparative evaluation of the Neuro-symbolic pipeline against Naive and CoT prompting across all three models and four metrics. Routing predicate extraction through PYTHEN improves F1-score over both baselines for all three models (e.g., from 0.725 under CoT to 0.813 for GPT OSS 120B), and narrows the spread of F1-scores across models relative to Naive prompting: the Neuro-symbolic pipeline is also the only configuration in which every model's accuracy exceeds 0.77. This aggregate gain is the starting point for the present paper, whose question is orthogonal to it: \emph{given} that the Neuro-symbolic pipeline reduces errors on average, which specific predicate extraction errors are responsible for the decisions it still gets wrong, and which are inconsequential? The remainder of this section answers that question.
+
+\begin{table}[htbp]
+\centering
+\caption{Comparative evaluation of Naive, Chain-of-Thought, and Neuro-symbolic (PYTHEN) pipelines across models.}
+\label{tab:baseline-comparison}
+\begin{tabular}{llcccc}
+\toprule
+\textbf{Approach} & \textbf{Model} & \textbf{Accuracy} & \textbf{Precision} & \textbf{Recall} & \textbf{F1-Score} \\
+\midrule
+\multirow{3}{*}{Naive LLMs} & DeepSeek V3.2 & 0.691489 & 0.603448 & 0.853659 & 0.707071 \\
+ & GPT OSS 120B & 0.648936 & 0.666667 & 0.390244 & 0.492308 \\
+ & Gemma 4 31B & 0.734043 & 0.673913 & 0.756098 & 0.712644 \\
+\midrule
+\multirow{3}{*}{LLMs with Chain-of-Thought} & DeepSeek V3.2 & 0.744681 & 0.634921 & \textbf{0.97561} & 0.769231 \\
+ & GPT OSS 120B & 0.765957 & 0.74359 & 0.707317 & 0.725 \\
+ & Gemma 4 31B & 0.776596 & 0.666667 & \textbf{0.97561} & 0.792079 \\
+\midrule
+\multirow{3}{*}{\shortstack[l]{Neuro-symbolic\\(LLMs with PYTHEN) \textit{(Ours)}}} & DeepSeek V3.2 & \textbf{0.776596} & \textbf{0.678571} & 0.926829 & \textbf{0.783505} \\
+ & GPT OSS 120B & \textbf{0.819149} & 0.74 & \textbf{0.902439} & \textbf{0.813187} \\
+ & Gemma 4 31B & \textbf{0.840426} & \textbf{0.75} & 0.95122 & \textbf{0.83871} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Oracle Experiment: Isolating the Symbolic Component}
+\label{subsec:oracle}
+To determine whether the residual error of the Neuro-symbolic pipeline originates in the LLM extractor or in the rule tree itself, we feed the manually annotated \emph{gold} predicate table directly into PYTHEN, bypassing the LLM entirely. Accuracy, Precision, Recall, and F1-score are all $1.0$. Because the rule tree in Equation~\ref{eq:hearsay-rule} reproduces every gold label exactly when given correct predicates, we conclude that $R$ is logically sound with respect to this dataset, and that all remaining error of the Neuro-symbolic pipeline is attributable to the predicate extraction step $\mathcal{E}$, not to symbolic inference. This result licenses the predicate-level intervention analysis of Section~\ref{subsec:dir-results}: since the rule tree itself is error-free, any decision flip observed under intervention can be attributed entirely to the extraction error being corrected.
+
+\subsection{Standalone Predicate Extraction Performance}
+\label{subsec:extraction}
+Table~\ref{tab:predicate-extraction} evaluates $\mathcal{E}$ directly against the gold predicate table, over all $94 \times 5 = 470$ predicate slots. Gemma 4 31B is the strongest extractor on every metric (F1 = 0.894), followed by GPT-OSS 120B and DeepSeek V3.2, which post nearly identical F1-scores (0.820 and 0.819) via different error profiles: GPT-OSS 120B trades more false positives for fewer false negatives, while DeepSeek V3.2 does the reverse.
+
+\begin{table}[htbp]
+\centering
+\caption{Standalone predicate extraction performance (470 predicate slots).}
+\label{tab:predicate-extraction}
+\begin{tabular}{lccccc}
+\toprule
+\textbf{Model} & \textbf{Accuracy} & \textbf{Precision} & \textbf{Recall} & \textbf{F1-Score} & \textbf{Macro F1} \\
+\midrule
+DeepSeek V3.2 & 0.845 & 0.789 & 0.851 & 0.819 & 0.689 \\
+GPT-OSS 120B   & 0.843 & 0.775 & 0.871 & 0.820 & 0.729 \\
+Gemma 4 31B   & \textbf{0.911} & \textbf{0.873} & \textbf{0.918} & \textbf{0.894} & \textbf{0.768} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The gap between micro-averaged F1 and Macro F1 in Table~\ref{tab:predicate-extraction} is itself informative: Gemma 4 31B falls from 0.894 to 0.768, and DeepSeek V3.2 from 0.819 to 0.689, once every predicate is weighted equally rather than by its frequency in the dataset. Table~\ref{tab:per-predicate-f1} breaks this down by predicate. \textit{is\_oral\_assertion} and \textit{is\_out\_of\_court} are extracted reliably by all three models (up to 0.957 and 0.976 F1 for Gemma 4 31B), whereas \textit{is\_written\_assertion} is extracted poorly across the board (0.286-0.429 F1). Manual inspection indicates that this predicate requires distinguishing a genuine written assertion from textual elements that merely appear in a fact pattern without being offered as a statement of affirmation - a distinction models frequently fail to draw - compounded by the predicate's low base rate in the subset, which makes its F1-score highly sensitive to a small number of errors.
+
+\begin{table}[htbp]
+\centering
+\caption{Predicate-level F1-score by model.}
+\label{tab:per-predicate-f1}
+\begin{tabular}{lccc}
+\toprule
+\textbf{Predicate} & \textbf{DeepSeek V3.2} & \textbf{GPT-OSS 120B} & \textbf{Gemma 4 31B} \\
+\midrule
+is\_oral\_assertion                & 0.897 & 0.929 & \textbf{0.957} \\
+is\_written\_assertion             & 0.286 & 0.429 & 0.375 \\
+is\_non\_verbal\_assertive\_conduct & 0.593 & 0.667 & 0.667 \\
+is\_out\_of\_court                 & 0.910 & 0.877 & \textbf{0.976} \\
+is\_introduced\_to\_prove\_truth   & 0.760 & 0.744 & \textbf{0.864} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The disparity between overall F1 and per-predicate F1 already suggests that not all predicates contribute equally to extraction difficulty; Section~\ref{subsec:dir-results} tests the further, distinct question of whether this extraction difficulty ranking coincides with the ranking of predicates by their actual effect on the final decision.
+
+\subsection{Predicate-Level Intervention: Decision Impact}
+\label{subsec:dir-results}
+We now apply the intervention procedure of Section~\ref{subsec:intervention} to every predicate error produced by each model on the \texttt{hearsay} subset. For every instance $i$ and every erroneous predicate $j \in E_i$, we correct $\hat{p}_{i,j}$ to its gold value, rerun the rule tree, and record $\mathrm{Impact}(i,j)$ (Equation~\ref{eq:impact-indicator}). Table~\ref{tab:dir} reports, for each predicate and model, the resulting Decision Impact Rate (DIR) alongside the predicate's standalone extraction F1-score from Table~\ref{tab:per-predicate-f1}; the subscript on each DIR value is the number of erroneous slots $|\{i : j \in E_i\}|$ it is computed over.
+
+\begin{table}[htbp]
+\centering
+\caption{Decision Impact Rate (DIR) versus extraction F1 by predicate and model. Subscripts denote the number of observed errors the DIR is computed over.}
+\label{tab:dir}
+\begin{tabular}{lcccccc}
+\toprule
+& \multicolumn{2}{c}{\textbf{DeepSeek V3.2}} & \multicolumn{2}{c}{\textbf{GPT-OSS 120B}} & \multicolumn{2}{c}{\textbf{Gemma 4 31B}} \\
+\textbf{Predicate} & F1 & DIR & F1 & DIR & F1 & DIR \\
+\midrule
+is\_oral\_assertion                 & 0.897 & $0.182_{(11)}$ & 0.929 & $0.125_{(8)}$  & 0.957 & $0.200_{(5)}$  \\
+is\_written\_assertion              & 0.286 & $\mathbf{0.700_{(10)}}$ & 0.429 & $\mathbf{0.875_{(8)}}$  & 0.375 & $\mathbf{0.900_{(10)}}$ \\
+is\_non\_verbal\_assertive\_conduct & 0.593 & $0.091_{(11)}$ & 0.667 & $0.000_{(9)}$  & 0.667 & $0.000_{(8)}$  \\
+is\_out\_of\_court                  & 0.910 & $0.167_{(12)}$ & 0.877 & $0.188_{(16)}$ & 0.976 & $1.000_{(3)}$  \\
+is\_introduced\_to\_prove\_truth    & 0.760 & $0.621_{(29)}$ & 0.744 & $0.394_{(33)}$ & 0.864 & $0.875_{(16)}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Table~\ref{tab:dir} confirms the structural prediction of Definition~\ref{def:structural} and shows that extraction F1 is a poor proxy for decision importance. \textit{is\_written\_assertion} is the hardest predicate to extract for every model (F1 between 0.286 and 0.429) and simultaneously has, by a wide margin, the highest DIR of any predicate for every model (0.700-0.900): nearly every time a model gets this predicate wrong, that specific error flips the final hearsay decision. \textit{is\_non\_verbal\_assertive\_conduct} has comparably low F1 (0.593-0.667) but the lowest DIR of all five predicates (0.000-0.091): its errors are almost always structurally redundant, since \textit{is\_oral\_assertion} or \textit{is\_written\_assertion} already satisfies the disjunctive assertion clause of Equation~\ref{eq:hearsay-rule} for the same instance. The two predicates with the highest extraction F1, \textit{is\_oral\_assertion} and \textit{is\_out\_of\_court}, illustrate that F1 and DIR can diverge in the opposite direction: \textit{is\_oral\_assertion}'s rare errors are mostly benign (DIR $\leq 0.200$) because they are usually redundant with another true assertion predicate, whereas \textit{is\_out\_of\_court} - a conjunctive gate with no disjunctive backup - carries a markedly higher DIR for GPT-OSS 120B and, on a small sample, for Gemma 4 31B (all 3 of its errors are decision-critical). \textit{is\_introduced\_to\_prove\_truth}, the other conjunctive gate, is both a comparatively frequent error source and consistently high-DIR (0.394-0.875) across all three models, making it - together with \textit{is\_written\_assertion} - the predicate most responsible for the pipeline's residual decision errors. Overall, the rank correlation between extraction difficulty ($1 - F_1$) and DIR is weak to negative for four of the five predicates, and strongly positive only for \textit{is\_written\_assertion}: a predicate that is both hard to extract and disproportionately consequential when extracted incorrectly, making it the clearest target for extractor improvement identified by this analysis.
+
+\subsection{Refined Error Taxonomy}
+\label{subsec:taxonomy-results}
+Applying the impact label from Section~\ref{subsec:taxonomy} to every E1-E3 extraction error over all $470$ predicate slots, Table~\ref{tab:taxonomy} reports, for each error type and model, how many errors are decision-critical versus benign, and what fraction of that error type is critical.
+
+\begin{table}[htbp]
+\centering
+\caption{Refined error taxonomy: critical vs.\ benign extraction errors by model, out of 470 predicate slots.}
+\label{tab:taxonomy}
+\begin{tabular}{llccc}
+\toprule
+\textbf{Error Type} & \textbf{Impact} & \textbf{DeepSeek V3.2} & \textbf{GPT-OSS 120B} & \textbf{Gemma 4 31B} \\
+\midrule
+\multirow{3}{*}{E1: Predicate Hallucination} & Critical & 25 (5.32\%) & 23 (4.89\%) & 25 (5.32\%) \\
+                                              & Benign   & 17 (3.62\%) & 26 (5.53\%) & 1 (0.21\%) \\
+                                              & \% Critical & 59.5\% & 46.9\% & \textbf{96.2\%} \\
+\midrule
+\multirow{3}{*}{E2: Predicate Omission}      & Critical & 4 (0.85\%) & 1 (0.21\%) & 2 (0.43\%) \\
+                                              & Benign   & 25 (5.32\%) & 24 (5.11\%) & 14 (2.98\%) \\
+                                              & \% Critical & 13.8\% & 4.0\% & 12.5\% \\
+\midrule
+\multirow{3}{*}{E3: Invalid Reference}       & Critical & 1 (0.21\%) & 0 (0.00\%) & 0 (0.00\%) \\
+                                              & Benign   & 1 (0.21\%) & 0 (0.00\%) & 0 (0.00\%) \\
+                                              & \% Critical & 50.0\% & - & - \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The un-refined error distribution - E1/E2/E3 counts before the impact label is applied - shows E1 (hallucination) to be the dominant extraction error for all three models (18.1\% of predicate slots for DeepSeek V3.2, 13.8\% for GPT-OSS 120B and Gemma 4 31B), with E2 (omission) substantially rarer (4.3\%, 4.3\%, and 2.1\%, respectively); this distribution also includes 2 E3 instances for DeepSeek V3.2, where a predicate was set to true with no supporting reference text at all. Table~\ref{tab:taxonomy} refines this picture along the dimension that matters for reliability: \emph{what fraction of each error type actually reaches the final decision}. For DeepSeek V3.2 and GPT-OSS 120B, E1 errors are critical only 59.5\% and 46.9\% of the time, respectively - meaning close to half (or more, for GPT-OSS 120B) of their hallucinated predicates are absorbed by the rule tree's disjunctive structure and never affect the output. Gemma 4 31B breaks this pattern sharply: although it hallucinates roughly as often in absolute terms (25 critical instances, comparable to the other two models), 96.2\% of its E1 errors are decision-critical, because Gemma rarely hallucinates a redundant assertion predicate when another is already true - its few hallucinations are concentrated on predicates that matter. Across all three models, E2 (omission) errors are critical far less often than E1 errors (4.0-13.8\%), indicating that when these extractors miss a predicate, the missed predicate is disproportionately likely to be one the decision did not depend on. This asymmetry - hallucination being substantially more decision-relevant than omission - would not be visible from the E1/E2 frequency counts alone, and is only revealed by cross-referencing error type with the intervention-based impact label.

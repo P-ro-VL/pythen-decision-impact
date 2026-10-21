@@ -1,0 +1,25 @@
+\section{Methodology}
+\label{sec:method}
+
+We formalize the neuro-symbolic pipeline coupling an LLM predicate extractor with the PYTHEN rule tree, and the predicate-level intervention procedure used to measure the downstream decision impact of individual predicate extraction errors.
+
+\textbf{Task, pipeline, and rule tree.}
+We use the \texttt{hearsay} subset of LegalBench (94 fact patterns), decomposed under Federal Rule of Evidence 801 into five binary predicates - \textit{is\_oral\_assertion}, \textit{is\_written\_assertion}, \textit{is\_non\_verbal\_assertive\_conduct}, \textit{is\_out\_of\_court}, and \textit{is\_introduced\_to\_prove\_truth} - which we manually annotated for every instance, giving a gold table of $94\times5=470$ predicate slots. Given a fact pattern $x$, an LLM extractor $\mathcal{E}$ produces $\hat{p} = \mathcal{E}(x) \in \{0,1\}^5$, which is passed unchanged to a fixed, hand-authored rule tree $R$ encoding FRE~801:
+\begin{equation}
+\label{eq:hearsay-rule}
+R(p) = \big(p_{\text{oral}} \lor p_{\text{written}} \lor p_{\text{nonverbal}}\big) \land\, p_{\text{out-of-court}} \land\, p_{\text{truth}},
+\end{equation}
+yielding $\hat{y} = R(\hat{p}) \in \{\text{Hearsay}, \text{Not Hearsay}\}$. Because $R$ is fixed and independent of the LLM, any difference in output across models is fully attributable to $\mathcal{E}$. The disjunctive clause and the two conjunctive gates in Eq.~\ref{eq:hearsay-rule} make predicates unequally important for a given instance: predicate $p_j$ is \emph{structurally critical} if flipping it alone, with all other predicates held at their gold values, changes $R(p)$, and \emph{structurally redundant} otherwise - e.g., $p_{\text{written}}$ is redundant whenever $p_{\text{oral}}$ or $p_{\text{nonverbal}}$ already holds, whereas $p_{\text{out-of-court}}$ and $p_{\text{truth}}$ are always critical when the assertion clause holds, since either alone can veto the decision.
+
+\textbf{Predicate-level intervention and decision impact.}
+Standard evaluation compares $\hat{y}_i = R(\hat{p}_i)$ against gold $y_i$ and separately reports predicate accuracy, but neither reveals which of the (possibly several) simultaneous predicate errors on an instance caused a wrong decision. For each instance $i$ with erroneous predicate indices $E_i = \{j : \hat{p}_{i,j} \neq p_{i,j}\}$, and each $j \in E_i$, we correct only predicate $j$ to its gold value, leaving every other predicate - including any other errors - at its extracted value, and rerun the unmodified rule tree to obtain $\hat{y}_i^{(j)}$. This isolates the causal effect of correcting exactly one predicate error, requiring no retraining or re-prompting: only the symbolic stage is rerun. The \emph{decision impact} of that single error is the binary indicator
+\begin{equation}
+\label{eq:impact-indicator}
+\mathrm{Impact}(i,j) = \mathbb{1}\big[\hat{y}_i^{(j)} \neq \hat{y}_i\big], \qquad j \in E_i,
+\end{equation}
+and averaging Eq.~\ref{eq:impact-indicator} over all observed errors of predicate $j$ across the dataset gives its \emph{Decision Impact Rate},
+\begin{equation}
+\label{eq:dir}
+\mathrm{DIR}(j) = \frac{1}{|\{i : j \in E_i\}|} \sum_{i \,:\, j \in E_i} \mathrm{Impact}(i,j),
+\end{equation}
+which we compare against predicate $j$'s standalone extraction $F_1$ to test whether extraction difficulty predicts practical importance to the downstream decision. We further annotate every extraction error with a type - E1: Predicate Hallucination, E2: Predicate Omission, E3: Invalid Reference - assigned from the extracted JSON, the gold table, and a supporting text span the extractor is prompted to emit for each true predicate, and with the impact label (Critical/Benign) from Eq.~\ref{eq:impact-indicator}, yielding six refined error categories used in Section~\ref{sec:experiments} to determine, per model, what fraction of extraction errors materially undermine the reliability of the final decision.

@@ -1,0 +1,368 @@
+{
+  "DeepSeek-V3.2": {
+    "model": "DeepSeek-V3.2",
+    "total_samples": 94,
+    "per_predicate": {
+      "is_oral_assertion": {
+        "TP": 48,
+        "FP": 0,
+        "FN": 11,
+        "TN": 35,
+        "Precision": 1.0,
+        "Recall": 0.8135593220338984,
+        "F1": 0.897196261682243,
+        "Accuracy": 0.8829787234042553,
+        "Support": 59,
+        "Total": 94
+      },
+      "is_written_assertion": {
+        "TP": 2,
+        "FP": 9,
+        "FN": 1,
+        "TN": 82,
+        "Precision": 0.18181818181818182,
+        "Recall": 0.6666666666666666,
+        "F1": 0.28571428571428575,
+        "Accuracy": 0.8936170212765957,
+        "Support": 3,
+        "Total": 94
+      },
+      "is_non_verbal_assertive_conduct": {
+        "TP": 8,
+        "FP": 3,
+        "FN": 8,
+        "TN": 75,
+        "Precision": 0.7272727272727273,
+        "Recall": 0.5,
+        "F1": 0.5925925925925926,
+        "Accuracy": 0.8829787234042553,
+        "Support": 16,
+        "Total": 94
+      },
+      "is_out_of_court": {
+        "TP": 61,
+        "FP": 12,
+        "FN": 0,
+        "TN": 21,
+        "Precision": 0.8356164383561644,
+        "Recall": 1.0,
+        "F1": 0.9104477611940298,
+        "Accuracy": 0.8723404255319149,
+        "Support": 61,
+        "Total": 94
+      },
+      "is_introduced_to_prove_truth": {
+        "TP": 46,
+        "FP": 20,
+        "FN": 9,
+        "TN": 19,
+        "Precision": 0.696969696969697,
+        "Recall": 0.8363636363636363,
+        "F1": 0.7603305785123968,
+        "Accuracy": 0.6914893617021277,
+        "Support": 55,
+        "Total": 94
+      }
+    },
+    "overall": {
+      "Macro_F1": 0.6892562959391096,
+      "Micro_F1": 0.8188585607940446,
+      "Micro_Precision": 0.7894736842105263,
+      "Micro_Recall": 0.8505154639175257,
+      "Overall_Accuracy": 0.8446808510638298,
+      "Exact_Match_Ratio": 0.4574468085106383,
+      "Exact_Matches": 43,
+      "Total_Slots": 470,
+      "Micro_TP": 165,
+      "Micro_FP": 44,
+      "Micro_FN": 29,
+      "Micro_TN": 232
+    },
+    "per_slice": {
+      "Non-assertive conduct": {
+        "sample_count": 19,
+        "Macro_F1": 0.0,
+        "Micro_F1": 0.0,
+        "Micro_Precision": 0.0,
+        "Micro_Recall": 0.0,
+        "Accuracy": 0.8421052631578947
+      },
+      "Non-verbal hearsay": {
+        "sample_count": 12,
+        "Macro_F1": 0.4818181818181818,
+        "Micro_F1": 0.7428571428571428,
+        "Micro_Precision": 0.7647058823529411,
+        "Micro_Recall": 0.7222222222222222,
+        "Accuracy": 0.7
+      },
+      "Not introduced to prove truth": {
+        "sample_count": 20,
+        "Macro_F1": 0.5215686274509804,
+        "Micro_F1": 0.7789473684210527,
+        "Micro_Precision": 0.6727272727272727,
+        "Micro_Recall": 0.925,
+        "Accuracy": 0.79
+      },
+      "Standard hearsay": {
+        "sample_count": 29,
+        "Macro_F1": 0.7962264150943396,
+        "Micro_F1": 0.9942196531791908,
+        "Micro_Precision": 1.0,
+        "Micro_Recall": 0.9885057471264368,
+        "Accuracy": 0.993103448275862
+      },
+      "Statement made in-court": {
+        "sample_count": 14,
+        "Macro_F1": 0.4247619047619048,
+        "Micro_F1": 0.6399999999999999,
+        "Micro_Precision": 0.8421052631578947,
+        "Micro_Recall": 0.5161290322580645,
+        "Accuracy": 0.7428571428571429
+      }
+    }
+  },
+  "GPT-OSS-120B": {
+    "model": "GPT-OSS-120B",
+    "total_samples": 94,
+    "per_predicate": {
+      "is_oral_assertion": {
+        "TP": 52,
+        "FP": 1,
+        "FN": 7,
+        "TN": 34,
+        "Precision": 0.9811320754716981,
+        "Recall": 0.8813559322033898,
+        "F1": 0.9285714285714285,
+        "Accuracy": 0.9148936170212766,
+        "Support": 59,
+        "Total": 94
+      },
+      "is_written_assertion": {
+        "TP": 3,
+        "FP": 8,
+        "FN": 0,
+        "TN": 83,
+        "Precision": 0.2727272727272727,
+        "Recall": 1.0,
+        "F1": 0.42857142857142855,
+        "Accuracy": 0.9148936170212766,
+        "Support": 3,
+        "Total": 94
+      },
+      "is_non_verbal_assertive_conduct": {
+        "TP": 9,
+        "FP": 2,
+        "FN": 7,
+        "TN": 76,
+        "Precision": 0.8181818181818182,
+        "Recall": 0.5625,
+        "F1": 0.6666666666666666,
+        "Accuracy": 0.9042553191489362,
+        "Support": 16,
+        "Total": 94
+      },
+      "is_out_of_court": {
+        "TP": 57,
+        "FP": 12,
+        "FN": 4,
+        "TN": 21,
+        "Precision": 0.8260869565217391,
+        "Recall": 0.9344262295081968,
+        "F1": 0.8769230769230769,
+        "Accuracy": 0.8297872340425532,
+        "Support": 61,
+        "Total": 94
+      },
+      "is_introduced_to_prove_truth": {
+        "TP": 48,
+        "FP": 26,
+        "FN": 7,
+        "TN": 13,
+        "Precision": 0.6486486486486487,
+        "Recall": 0.8727272727272727,
+        "F1": 0.744186046511628,
+        "Accuracy": 0.648936170212766,
+        "Support": 55,
+        "Total": 94
+      }
+    },
+    "overall": {
+      "Macro_F1": 0.7289837294488457,
+      "Micro_F1": 0.8203883495145631,
+      "Micro_Precision": 0.7752293577981652,
+      "Micro_Recall": 0.8711340206185567,
+      "Overall_Accuracy": 0.8425531914893617,
+      "Exact_Match_Ratio": 0.5106382978723404,
+      "Exact_Matches": 48,
+      "Total_Slots": 470,
+      "Micro_TP": 169,
+      "Micro_FP": 49,
+      "Micro_FN": 25,
+      "Micro_TN": 227
+    },
+    "per_slice": {
+      "Non-assertive conduct": {
+        "sample_count": 19,
+        "Macro_F1": 0.0,
+        "Micro_F1": 0.0,
+        "Micro_Precision": 0.0,
+        "Micro_Recall": 0.0,
+        "Accuracy": 0.6947368421052632
+      },
+      "Non-verbal hearsay": {
+        "sample_count": 12,
+        "Macro_F1": 0.5002557544757034,
+        "Micro_F1": 0.7714285714285715,
+        "Micro_Precision": 0.7941176470588235,
+        "Micro_Recall": 0.75,
+        "Accuracy": 0.7333333333333333
+      },
+      "Not introduced to prove truth": {
+        "sample_count": 20,
+        "Macro_F1": 0.7224908424908425,
+        "Micro_F1": 0.8539325842696629,
+        "Micro_Precision": 0.7755102040816326,
+        "Micro_Recall": 0.95,
+        "Accuracy": 0.87
+      },
+      "Standard hearsay": {
+        "sample_count": 29,
+        "Macro_F1": 0.7742557442557442,
+        "Micro_F1": 0.9580838323353293,
+        "Micro_Precision": 1.0,
+        "Micro_Recall": 0.9195402298850575,
+        "Accuracy": 0.9517241379310345
+      },
+      "Statement made in-court": {
+        "sample_count": 14,
+        "Macro_F1": 0.514095238095238,
+        "Micro_F1": 0.8421052631578947,
+        "Micro_Precision": 0.9230769230769231,
+        "Micro_Recall": 0.7741935483870968,
+        "Accuracy": 0.8714285714285714
+      }
+    }
+  },
+  "Gemma-4-31B": {
+    "model": "Gemma-4-31B",
+    "total_samples": 94,
+    "per_predicate": {
+      "is_oral_assertion": {
+        "TP": 55,
+        "FP": 1,
+        "FN": 4,
+        "TN": 34,
+        "Precision": 0.9821428571428571,
+        "Recall": 0.9322033898305084,
+        "F1": 0.9565217391304348,
+        "Accuracy": 0.9468085106382979,
+        "Support": 59,
+        "Total": 94
+      },
+      "is_written_assertion": {
+        "TP": 3,
+        "FP": 10,
+        "FN": 0,
+        "TN": 81,
+        "Precision": 0.23076923076923078,
+        "Recall": 1.0,
+        "F1": 0.375,
+        "Accuracy": 0.8936170212765957,
+        "Support": 3,
+        "Total": 94
+      },
+      "is_non_verbal_assertive_conduct": {
+        "TP": 8,
+        "FP": 0,
+        "FN": 8,
+        "TN": 78,
+        "Precision": 1.0,
+        "Recall": 0.5,
+        "F1": 0.6666666666666666,
+        "Accuracy": 0.9148936170212766,
+        "Support": 16,
+        "Total": 94
+      },
+      "is_out_of_court": {
+        "TP": 61,
+        "FP": 3,
+        "FN": 0,
+        "TN": 30,
+        "Precision": 0.953125,
+        "Recall": 1.0,
+        "F1": 0.976,
+        "Accuracy": 0.9680851063829787,
+        "Support": 61,
+        "Total": 94
+      },
+      "is_introduced_to_prove_truth": {
+        "TP": 51,
+        "FP": 12,
+        "FN": 4,
+        "TN": 27,
+        "Precision": 0.8095238095238095,
+        "Recall": 0.9272727272727272,
+        "F1": 0.864406779661017,
+        "Accuracy": 0.8297872340425532,
+        "Support": 55,
+        "Total": 94
+      }
+    },
+    "overall": {
+      "Macro_F1": 0.7677190370916237,
+      "Micro_F1": 0.8944723618090452,
+      "Micro_Precision": 0.8725490196078431,
+      "Micro_Recall": 0.9175257731958762,
+      "Overall_Accuracy": 0.9106382978723404,
+      "Exact_Match_Ratio": 0.7021276595744681,
+      "Exact_Matches": 66,
+      "Total_Slots": 470,
+      "Micro_TP": 178,
+      "Micro_FP": 26,
+      "Micro_FN": 16,
+      "Micro_TN": 250
+    },
+    "per_slice": {
+      "Non-assertive conduct": {
+        "sample_count": 19,
+        "Macro_F1": 0.0,
+        "Micro_F1": 0.0,
+        "Micro_Precision": 0.0,
+        "Micro_Recall": 0.0,
+        "Accuracy": 0.9368421052631579
+      },
+      "Non-verbal hearsay": {
+        "sample_count": 12,
+        "Macro_F1": 0.5,
+        "Micro_F1": 0.7777777777777778,
+        "Micro_Precision": 0.7777777777777778,
+        "Micro_Recall": 0.7777777777777778,
+        "Accuracy": 0.7333333333333333
+      },
+      "Not introduced to prove truth": {
+        "sample_count": 20,
+        "Macro_F1": 0.8,
+        "Micro_F1": 0.888888888888889,
+        "Micro_Precision": 0.8,
+        "Micro_Recall": 1.0,
+        "Accuracy": 0.9
+      },
+      "Standard hearsay": {
+        "sample_count": 29,
+        "Macro_F1": 0.7928571428571429,
+        "Micro_F1": 0.9883720930232558,
+        "Micro_Precision": 1.0,
+        "Micro_Recall": 0.9770114942528736,
+        "Accuracy": 0.9862068965517241
+      },
+      "Statement made in-court": {
+        "sample_count": 14,
+        "Macro_F1": 0.5512820512820513,
+        "Micro_F1": 0.8620689655172414,
+        "Micro_Precision": 0.9259259259259259,
+        "Micro_Recall": 0.8064516129032258,
+        "Accuracy": 0.8857142857142857
+      }
+    }
+  }
+}

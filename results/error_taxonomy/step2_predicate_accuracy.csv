@@ -1,0 +1,16 @@
+model,predicate,predicate_label,TP,FP,FN,TN,precision,recall,f1,total_errors,critical_errors,DIR
+DeepSeek-V3.2,is_oral_assertion,Oral Assertion,48,0,11,35,1.0,0.8136,0.8972,11,2,0.1818
+DeepSeek-V3.2,is_written_assertion,Written Assertion,2,9,1,82,0.1818,0.6667,0.2857,10,7,0.7
+DeepSeek-V3.2,is_non_verbal_assertive_conduct,Non-verbal Assertive Conduct,8,3,8,75,0.7273,0.5,0.5926,11,1,0.0909
+DeepSeek-V3.2,is_out_of_court,Out of Court,61,12,0,21,0.8356,1.0,0.9104,12,2,0.1667
+DeepSeek-V3.2,is_introduced_to_prove_truth,Introduced to Prove Truth,46,20,9,19,0.697,0.8364,0.7603,29,18,0.6207
+GPT-OSS-120B,is_oral_assertion,Oral Assertion,52,1,7,34,0.9811,0.8814,0.9286,8,1,0.125
+GPT-OSS-120B,is_written_assertion,Written Assertion,3,8,0,83,0.2727,1.0,0.4286,8,7,0.875
+GPT-OSS-120B,is_non_verbal_assertive_conduct,Non-verbal Assertive Conduct,9,2,7,76,0.8182,0.5625,0.6667,9,0,0.0
+GPT-OSS-120B,is_out_of_court,Out of Court,57,12,4,21,0.8261,0.9344,0.8769,16,3,0.1875
+GPT-OSS-120B,is_introduced_to_prove_truth,Introduced to Prove Truth,48,26,7,13,0.6486,0.8727,0.7442,33,13,0.3939
+Gemma-4-31B,is_oral_assertion,Oral Assertion,55,1,4,34,0.9821,0.9322,0.9565,5,1,0.2
+Gemma-4-31B,is_written_assertion,Written Assertion,3,10,0,81,0.2308,1.0,0.375,10,9,0.9
+Gemma-4-31B,is_non_verbal_assertive_conduct,Non-verbal Assertive Conduct,8,0,8,78,1.0,0.5,0.6667,8,0,0.0
+Gemma-4-31B,is_out_of_court,Out of Court,61,3,0,30,0.9531,1.0,0.976,3,3,1.0
+Gemma-4-31B,is_introduced_to_prove_truth,Introduced to Prove Truth,51,12,4,27,0.8095,0.9273,0.8644,16,14,0.875

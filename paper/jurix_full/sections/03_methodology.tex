@@ -1,0 +1,85 @@
+\section{Methodology}
+\label{sec:method}
+
+This section formalizes the neuro-symbolic pipeline that couples an LLM predicate extractor with the PYTHEN rule tree, and introduces the predicate-level intervention procedure used to measure the downstream decision impact of individual predicate extraction errors. We first present the pipeline and the rule tree it relies on (Sections~\ref{subsec:task}-\ref{subsec:tree}). We then introduce the core methodological contribution of this paper: single-predicate intervention (Section~\ref{subsec:intervention}), the decision impact metrics derived from it (Section~\ref{subsec:metrics}), and a rule-aware refinement of an extraction-error taxonomy for this pipeline (Section~\ref{subsec:taxonomy}).
+
+\subsection{Task and Dataset}
+\label{subsec:task}
+We use the \texttt{hearsay} subset of LegalBench, in which each instance is a natural-language fact pattern together with a binary gold label indicating whether the described evidence constitutes hearsay. The subset contains 94 fact patterns. Following Federal Rule of Evidence 801 (FRE 801), we decompose the hearsay determination into five binary predicates, which we manually annotated for every fact pattern to obtain a gold predicate table:
+\begin{itemize}
+    \item \textit{is\_oral\_assertion}: the evidence involves a spoken statement or oral assertion.
+    \item \textit{is\_written\_assertion}: the evidence involves a written statement or document.
+    \item \textit{is\_non\_verbal\_assertive\_conduct}: the evidence involves non-verbal conduct intended as an assertion.
+    \item \textit{is\_out\_of\_court}: the statement or conduct was made outside the current trial or hearing.
+    \item \textit{is\_introduced\_to\_prove\_truth}: the evidence is introduced to prove the truth of the matter it asserts.
+\end{itemize}
+With 94 fact patterns and 5 predicates each, the gold table contains \textbf{470 predicate slots} in total. This predicate-level annotation, which is independent of the final hearsay label, is what makes the intervention procedure in Section~\ref{subsec:intervention} possible: it allows any single predicate in a model's extraction to be corrected in isolation, holding all other extracted predicates fixed.
+
+\subsection{Neuro-Symbolic Pipeline}
+\label{subsec:pipeline}
+The pipeline separates fact extraction from legal inference. Given a fact pattern $x$, an LLM extractor $\mathcal{E}$ maps $x$ to a predicate vector
+\begin{equation}
+\label{eq:extractor}
+\hat{p} = \mathcal{E}(x) \in \{0,1\}^5,
+\end{equation}
+where each coordinate corresponds to one of the five predicates in Section~\ref{subsec:task}. The extractor is prompted to also emit, for every predicate it sets to true, a supporting text span from $x$. This reference is not used by the symbolic reasoner, but is used during error annotation to distinguish genuine extraction errors from spurious ones (Section~\ref{subsec:taxonomy}).
+
+The predicate vector $\hat{p}$ is then passed, unchanged, to the PYTHEN rule tree $R$, a fixed, hand-authored symbolic reasoner that computes the final decision
+\begin{equation}
+\label{eq:rule-tree}
+\hat{y} = R(\hat{p}) \in \{\text{Hearsay}, \text{Not Hearsay}\}
+\end{equation}
+together with an explicit trace of which nodes of the tree were visited and which predicates determined each branching decision. Because $R$ is fixed and independent of the LLM, the only component that varies across models in this pipeline is the extractor $\mathcal{E}$; any change in $R$'s output between models is fully attributable to differences in their extracted predicate vectors.
+
+\subsection{Formalizing the PYTHEN Rule Tree}
+\label{subsec:tree}
+The PYTHEN rule tree for hearsay classification encodes the statutory structure of FRE~801 as a Boolean function over the five predicates. An item of evidence is hearsay if and only if: (i) it constitutes an assertion, in oral, written, or non-verbal assertive form; (ii) that assertion was made out of court; and (iii) it is offered to prove the truth of the matter asserted:
+\begin{equation}
+\label{eq:hearsay-rule}
+R(p) = \big(p_{\text{oral}} \lor p_{\text{written}} \lor p_{\text{nonverbal}}\big) \land\, p_{\text{out-of-court}} \land\, p_{\text{truth}}.
+\end{equation}
+Unlike a flat logistic combination of predicates, this structure is a decision tree: the disjunctive assertion clause is evaluated first, and the two conjunctive conditions act as gates that can independently veto a positive assertion clause. This structure is what makes different predicates unequally important for a given fact pattern, which we formalize next.
+
+\begin{definition}[Structural Criticality]
+\label{def:structural}
+For a fact pattern with gold predicate vector $p$, predicate $p_j$ is \emph{structurally critical} if flipping $p_j$ alone, with all other predicates held at their gold values, changes the value of $R(p)$. Predicate $p_j$ is \emph{structurally redundant} otherwise.
+\end{definition}
+
+Under Equation~\ref{eq:hearsay-rule}, for instance, $p_{\text{written}}$ is structurally redundant whenever $p_{\text{oral}} = 1$ or $p_{\text{nonverbal}} = 1$ already satisfies the disjunctive clause, since flipping $p_{\text{written}}$ cannot then change $R(p)$; but $p_{\text{out-of-court}}$ and $p_{\text{truth}}$ are always structurally critical when the assertion clause holds, since either one alone can veto the decision. Definition~\ref{def:structural} is a static, ground-truth-only property of the rule tree and the instance.
+ 
+\subsection{Predicate-Level Intervention}
+\label{subsec:intervention}
+This section operationalizes the analogous, empirical question for an LLM's actual predicate errors.
+
+Standard evaluation of the pipeline compares $\hat{y}_i = R(\hat{p}_i)$ against the gold label $y_i = R(p_i)$ for each instance $i$, and separately reports predicate-level accuracy of $\hat{p}_i$ against $p_i$. Neither measurement indicates which of the (possibly several) predicate errors in $\hat{p}_i$ was responsible for a wrong final decision. We address this with a single-predicate intervention procedure.
+
+For each instance $i$ where the extractor makes at least one predicate error, let $E_i = \{j : \hat{p}_{i,j} \neq p_{i,j}\}$ be the set of erroneous predicate indices. For every $j \in E_i$, we construct an intervened predicate vector $\hat{p}_i^{(j)}$ by correcting only predicate $j$ to its gold value and leaving every other predicate - including any other errors - at its extracted value:
+\begin{equation}
+\label{eq:intervention}
+\hat{p}_{i,k}^{(j)} =
+\begin{cases}
+p_{i,j} & \text{if } k = j \\
+\hat{p}_{i,k} & \text{otherwise.}
+\end{cases}
+\end{equation}
+We rerun the (unmodified) PYTHEN rule tree on the intervened vector to obtain $\hat{y}_i^{(j)} = R(\hat{p}_i^{(j)})$, and compare it to the pipeline's original decision $\hat{y}_i = R(\hat{p}_i)$. This isolates the causal effect of correcting exactly one predicate error, holding the extractor's other outputs - correct or incorrect - fixed, and requires no retraining or re-prompting of the LLM: only the symbolic stage is rerun.
+
+\subsection{Decision Impact Metrics}
+\label{subsec:metrics}
+We define the \emph{decision impact} of a single predicate error as a binary indicator,
+\begin{equation}
+\label{eq:impact-indicator}
+\mathrm{Impact}(i,j) = \mathbb{1}\big[\hat{y}_i^{(j)} \neq \hat{y}_i\big], \qquad j \in E_i,
+\end{equation}
+which is 1 exactly when correcting that single error would have flipped the pipeline's final decision, and 0 when the error was decision-irrelevant given the model's other outputs on that instance. Aggregating Equation~\ref{eq:impact-indicator} over all observed errors of a given predicate $j$ across the dataset yields the \emph{Decision Impact Rate} (DIR) of that predicate,
+\begin{equation}
+\label{eq:dir}
+\mathrm{DIR}(j) = \frac{1}{|\{i : j \in E_i\}|} \sum_{i \,:\, j \in E_i} \mathrm{Impact}(i,j),
+\end{equation}
+the fraction of that predicate's extraction errors that actually alter the model's final hearsay decision. We report $\mathrm{DIR}(j)$ alongside the standalone extraction $F_1$-score of predicate $j$ (computed as in our earlier predicate-extraction evaluation) for each of the three LLMs, which lets us directly test whether a predicate's extraction difficulty, as measured by $F_1$, is a reliable proxy for its practical importance to the downstream legal decision, or whether the two diverge - e.g., a predicate with comparatively high $F_1$ but high DIR would be a higher-priority target for improvement than its $F_1$-score alone suggests, and vice versa.
+
+We additionally compute an instance-level counterpart, the \emph{decision-flip rate}: the fraction of originally misclassified instances ($\hat{y}_i \neq y_i$) for which correcting \emph{all} erroneous predicates in $E_i$ restores $\hat{y}_i = y_i$ when they are corrected one at a time versus jointly, which lets us check for interaction effects between simultaneous predicate errors that single-predicate intervention alone cannot capture.
+
+\subsection{Refined Error Taxonomy}
+\label{subsec:taxonomy}
+We categorize every extraction error using a three-part type taxonomy (E1: Predicate Hallucination, E2: Predicate Omission, E3: Invalid Reference), and extend it with the decision-impact dimension defined above. Every extraction error is now annotated with a two-part label $(\text{Type}, \text{Impact})$, where \textit{Type} $\in \{\text{E1}, \text{E2}, \text{E3}\}$ is assigned as before from the extracted JSON, the gold predicate table, and the supporting reference span, and \textit{Impact} $\in \{\text{Critical}, \text{Benign}\}$ is assigned from $\mathrm{Impact}(i,j)$ in Equation~\ref{eq:impact-indicator}. This yields six refined error categories (e.g., \textit{Critical Hallucination} vs.\ \textit{Benign Hallucination}), which we use in Section~\ref{sec:experiments} to determine, for each model, what fraction of its extraction errors are merely statistical noise in the predicate table versus errors that materially undermine the reliability of the final legal decision.

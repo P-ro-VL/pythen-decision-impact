@@ -1,0 +1,4 @@
+file,accuracy,precision,recall,f1_score,tp,tn,fp,fn
+baseline_deepseek.deepseek-v3.2.csv,0.744681,0.634921,0.975610,0.769231,40,30,23,1
+baseline_google.gemma-4-31b.csv,0.776596,0.666667,0.975610,0.792079,40,33,20,1
+baseline_openai.gpt-oss-120b.csv,0.765957,0.743590,0.707317,0.725000,29,43,10,12

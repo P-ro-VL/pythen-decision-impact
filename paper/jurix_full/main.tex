@@ -1,0 +1,67 @@
+\documentclass{IOS-Book-Article}
+
+\usepackage{times}
+\usepackage{soul}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{tabularx}
+\usepackage{microtype}
+
+\newtheorem{definition}{Definition}
+\newtheorem{example}{Example}
+\newtheorem{theorem}{Theorem}
+
+% -------------------------------------
+% Document Start
+% -------------------------------------
+\begin{document}
+
+\begin{frontmatter}
+
+\title{Measuring the Downstream Decision Impact of Predicate Extraction Errors in Symbolic Legal Engines}
+\runningtitle{Measuring the Downstream Decision Impact of Predicate Extraction Errors in Symbolic Legal Engines}
+
+% Authors & Affiliations
+\author[A]{\fnms{Linh} \snm{Pham Van}%
+\thanks{Corresponding Author: Linh Pham Van, College of Engineering \& Computer Science, VinUniversity, Viet Nam; E-mail: linhpv.vinuni@gmail.com.}},
+\author[A]{\fnms{Ha-Thanh} \snm{Nguyen}%
+\thanks{Corresponding Author: Ha-Thanh Nguyen, College of Engineering \& Computer Science, VinUniversity, Viet Nam; E-mail: thanh.nh6@vinuni.edu.vn.}}
+and
+\author[B]{\fnms{Ken} \snm{Satoh}%
+\thanks{Corresponding Author: Ken Satoh, Center for Juris-Informatics, ROIS-DS, Japan; E-mail: ksatoh@nii.ac.jp.}}
+\runningauthor{L.V. Pham et al.}
+
+\address[A]{College of Engineering \& Computer Science, VinUniversity, Viet Nam}
+\address[B]{Center for Juris-Informatics, ROIS-DS, Japan}
+
+% Abstract
+\begin{abstract}
+Neuro-symbolic legal reasoning pipelines couple an LLM, which extracts structured predicates from a fact pattern, with a symbolic rule engine that applies an auditable legal rule to reach a decision. Such pipelines are typically evaluated by the extractor's predicate-level accuracy or F1-score, which implicitly treats every predicate error as equally consequential. We show this assumption does not hold: because a symbolic rule tree encodes conditional structure, some predicate errors flip the final decision while others are absorbed as redundant, and standard extraction metrics cannot tell the two apart. Using the PYTHEN framework applied to hearsay classification on LegalBench, we introduce a predicate-level intervention procedure that corrects one erroneous predicate at a time, reruns the rule tree, and measures whether the decision changes, yielding a Decision Impact Rate (DIR) for each predicate, which we compare against standalone extraction F1 and use to refine an extraction-error taxonomy for this pipeline along a decision-relevance dimension. Across three LLMs, we find that extraction difficulty and decision impact diverge sharply: the hardest predicate to extract is also the most decision-critical, while a comparably hard predicate is almost always inconsequential, and nominally identical error types carry markedly different downstream risk across models. These results argue for rule-aware error attribution, rather than aggregate predicate accuracy alone, as a necessary complement to evaluating and verifying LLM-symbolic legal reasoning pipelines.
+\end{abstract}
+
+% Keywords
+\begin{keyword}
+Neuro-Symbolic Legal AI \sep Explainability and Verification \sep Error Attribution \sep Large Language Models \sep LegalBench \sep Hearsay Classification
+\end{keyword}
+
+\end{frontmatter}
+
+% -------------------------------------
+% Sections
+% -------------------------------------
+\input{sections/01_introduction}
+\input{sections/02_related_work}
+\input{sections/03_methodology}
+\input{sections/04_experiments}
+\input{sections/05_discussion}
+\input{sections/06_conclusion}
+
+% -------------------------------------
+% References
+% -------------------------------------
+\bibliographystyle{vancouver}
+\bibliography{references}
+
+\end{document}

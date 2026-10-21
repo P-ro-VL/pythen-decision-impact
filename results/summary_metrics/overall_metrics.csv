@@ -1,0 +1,4 @@
+Model,Macro_F1,Micro_F1,Micro_Precision,Micro_Recall,Accuracy,Exact_Match_Ratio,Total_Samples,Total_Predicate_Slots
+DeepSeek-V3.2,0.6893,0.8189,0.7895,0.8505,0.8447,0.4574,94,470
+GPT-OSS-120B,0.729,0.8204,0.7752,0.8711,0.8426,0.5106,94,470
+Gemma-4-31B,0.7677,0.8945,0.8725,0.9175,0.9106,0.7021,94,470

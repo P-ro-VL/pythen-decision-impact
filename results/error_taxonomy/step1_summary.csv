@@ -1,0 +1,4 @@
+﻿model,total_samples,ns_correct,ns_wrong,has_cot_reasoning,ns_wrong_with_cot
+DeepSeek-V3.2,94,73,21,94,21
+GPT-OSS-120B,94,77,17,94,17
+Gemma-4-31B,94,79,15,94,15

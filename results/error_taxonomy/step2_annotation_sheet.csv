@@ -1,0 +1,54 @@
+sample_id,model,index,slice,fact_pattern,ground_truth_hearsay,model_prediction,critical_predicate,error_details,oral_gt,written_gt,nonverbal_gt,out_of_court_gt,for_truth_gt,oral_pred,written_pred,nonverbal_pred,out_of_court_pred,for_truth_pred
+#23,DeepSeek-V3.2,23,,,False,True,is_out_of_court,E1(Critical): is_out_of_court,True,False,False,False,True,True,False,False,True,True
+#28,DeepSeek-V3.2,28,,,False,True,is_out_of_court,E1(Critical): is_out_of_court,True,False,False,False,True,True,False,False,True,True
+#38,DeepSeek-V3.2,38,,,True,False,is_oral_assertion,E2(Critical): is_oral_assertion,True,False,False,True,True,False,False,False,True,True
+#47,DeepSeek-V3.2,47,,,False,True,is_introduced_to_prove_truth,E1(Critical): is_introduced_to_prove_truth,True,False,False,True,False,True,False,False,True,True
+#64,DeepSeek-V3.2,64,,,True,False,is_introduced_to_prove_truth,E2(Critical): is_introduced_to_prove_truth,False,False,True,True,True,False,False,True,True,False
+#72,DeepSeek-V3.2,72,,,False,True,is_non_verbal_assertive_conduct,E2(Benign): is_written_assertion | E1(Critical): is_non_verbal_assertive_conduct | E1(Critical): is_introduced_to_prove_truth,False,True,False,True,False,False,False,True,True,True
+#73,DeepSeek-V3.2,73,,,True,False,is_introduced_to_prove_truth,E1(Benign): is_written_assertion | E2(Benign): is_non_verbal_assertive_conduct | E2(Critical): is_introduced_to_prove_truth,False,False,True,True,True,False,True,False,True,False
+#74,DeepSeek-V3.2,74,,,False,True,is_introduced_to_prove_truth,E1(Critical): is_introduced_to_prove_truth,False,False,True,True,False,False,False,True,True,True
+#76,DeepSeek-V3.2,76,,,False,True,is_introduced_to_prove_truth,E1(Critical): is_introduced_to_prove_truth,True,False,False,True,False,True,False,False,True,True
+#77,DeepSeek-V3.2,77,,,False,True,is_introduced_to_prove_truth,E1(Critical): is_introduced_to_prove_truth,True,False,False,True,False,True,False,False,True,True
+#78,DeepSeek-V3.2,78,,,False,True,is_introduced_to_prove_truth,E1(Critical): is_introduced_to_prove_truth,True,False,False,True,False,True,False,False,True,True
+#79,DeepSeek-V3.2,79,,,False,True,is_introduced_to_prove_truth,E1(Critical): is_introduced_to_prove_truth,True,False,False,True,False,True,False,False,True,True
+#80,DeepSeek-V3.2,80,,,False,True,is_introduced_to_prove_truth,E1(Critical): is_introduced_to_prove_truth,True,False,False,True,False,True,False,False,True,True
+#81,DeepSeek-V3.2,81,,,False,True,is_introduced_to_prove_truth,E1(Critical): is_introduced_to_prove_truth,True,False,False,True,False,True,False,False,True,True
+#82,DeepSeek-V3.2,82,,,False,True,is_introduced_to_prove_truth,E1(Critical): is_introduced_to_prove_truth,True,False,False,True,False,True,False,False,True,True
+#85,DeepSeek-V3.2,85,,,False,True,is_introduced_to_prove_truth,E1(Critical): is_introduced_to_prove_truth,True,False,False,True,False,True,False,False,True,True
+#86,DeepSeek-V3.2,86,,,False,True,is_introduced_to_prove_truth,E1(Critical): is_introduced_to_prove_truth,True,False,False,True,False,True,False,False,True,True
+#87,DeepSeek-V3.2,87,,,False,True,is_introduced_to_prove_truth,E1(Critical): is_introduced_to_prove_truth,True,False,False,True,False,True,False,False,True,True
+#88,DeepSeek-V3.2,88,,,False,True,is_introduced_to_prove_truth,E1(Critical): is_introduced_to_prove_truth,True,False,False,True,False,True,False,False,True,True
+#89,DeepSeek-V3.2,89,,,False,True,is_introduced_to_prove_truth,E1(Critical): is_introduced_to_prove_truth,True,False,False,True,False,True,False,False,True,True
+#91,DeepSeek-V3.2,91,,,False,True,is_introduced_to_prove_truth,E1(Critical): is_introduced_to_prove_truth,True,False,False,True,False,True,False,False,True,True
+#6,GPT-OSS-120B,6,,,False,True,is_written_assertion,E1(Critical): is_written_assertion | E1(Critical): is_out_of_court | E1(Critical): is_introduced_to_prove_truth,False,False,False,False,False,False,True,False,True,True
+#9,GPT-OSS-120B,9,,,False,True,is_oral_assertion,E1(Critical): is_oral_assertion | E1(Critical): is_out_of_court | E1(Critical): is_introduced_to_prove_truth,False,False,False,False,False,True,False,False,True,True
+#23,GPT-OSS-120B,23,,,False,True,is_out_of_court,E1(Critical): is_out_of_court,True,False,False,False,True,True,False,False,True,True
+#42,GPT-OSS-120B,42,,,True,False,is_introduced_to_prove_truth,E2(Critical): is_introduced_to_prove_truth,True,False,False,True,True,True,False,False,True,False
+#46,GPT-OSS-120B,46,,,True,False,,E2(Benign): is_oral_assertion | E2(Benign): is_out_of_court | E2(Benign): is_introduced_to_prove_truth,True,False,False,True,True,False,False,False,False,False
+#47,GPT-OSS-120B,47,,,False,True,is_introduced_to_prove_truth,E1(Critical): is_introduced_to_prove_truth,True,False,False,True,False,True,False,False,True,True
+#51,GPT-OSS-120B,51,,,True,False,,E2(Benign): is_oral_assertion | E2(Benign): is_out_of_court | E2(Benign): is_introduced_to_prove_truth,True,False,False,True,True,False,False,False,False,False
+#53,GPT-OSS-120B,53,,,False,True,is_introduced_to_prove_truth,E1(Critical): is_introduced_to_prove_truth,True,False,False,True,False,True,False,False,True,True
+#65,GPT-OSS-120B,65,,,True,False,,E2(Benign): is_non_verbal_assertive_conduct | E2(Benign): is_out_of_court | E2(Benign): is_introduced_to_prove_truth,False,False,True,True,True,False,False,False,False,False
+#72,GPT-OSS-120B,72,,,False,True,is_introduced_to_prove_truth,E1(Benign): is_non_verbal_assertive_conduct | E1(Critical): is_introduced_to_prove_truth,False,True,False,True,False,False,True,True,True,True
+#74,GPT-OSS-120B,74,,,False,True,is_introduced_to_prove_truth,E1(Critical): is_introduced_to_prove_truth,False,False,True,True,False,False,False,True,True,True
+#76,GPT-OSS-120B,76,,,False,True,is_introduced_to_prove_truth,E1(Critical): is_introduced_to_prove_truth,True,False,False,True,False,True,False,False,True,True
+#77,GPT-OSS-120B,77,,,False,True,is_introduced_to_prove_truth,E1(Critical): is_introduced_to_prove_truth,True,False,False,True,False,True,False,False,True,True
+#78,GPT-OSS-120B,78,,,False,True,is_introduced_to_prove_truth,E1(Critical): is_introduced_to_prove_truth,True,False,False,True,False,True,False,False,True,True
+#79,GPT-OSS-120B,79,,,False,True,is_introduced_to_prove_truth,E1(Critical): is_introduced_to_prove_truth,True,False,False,True,False,True,False,False,True,True
+#81,GPT-OSS-120B,81,,,False,True,is_introduced_to_prove_truth,E1(Critical): is_introduced_to_prove_truth,True,False,False,True,False,True,False,False,True,True
+#85,GPT-OSS-120B,85,,,False,True,is_introduced_to_prove_truth,E1(Critical): is_introduced_to_prove_truth,True,False,False,True,False,True,False,False,True,True
+#6,Gemma-4-31B,6,,,False,True,is_written_assertion,E1(Critical): is_written_assertion | E1(Critical): is_out_of_court | E1(Critical): is_introduced_to_prove_truth,False,False,False,False,False,False,True,False,True,True
+#9,Gemma-4-31B,9,,,False,True,is_oral_assertion,E1(Critical): is_oral_assertion | E1(Critical): is_out_of_court | E1(Critical): is_introduced_to_prove_truth,False,False,False,False,False,True,False,False,True,True
+#23,Gemma-4-31B,23,,,False,True,is_out_of_court,E1(Critical): is_out_of_court,True,False,False,False,True,True,False,False,True,True
+#42,Gemma-4-31B,42,,,True,False,is_introduced_to_prove_truth,E2(Critical): is_introduced_to_prove_truth,True,False,False,True,True,True,False,False,True,False
+#72,Gemma-4-31B,72,,,False,True,is_introduced_to_prove_truth,E1(Critical): is_introduced_to_prove_truth,False,True,False,True,False,False,True,False,True,True
+#74,Gemma-4-31B,74,,,False,True,is_introduced_to_prove_truth,E1(Critical): is_introduced_to_prove_truth,False,False,True,True,False,False,False,True,True,True
+#76,Gemma-4-31B,76,,,False,True,is_introduced_to_prove_truth,E1(Critical): is_introduced_to_prove_truth,True,False,False,True,False,True,False,False,True,True
+#77,Gemma-4-31B,77,,,False,True,is_introduced_to_prove_truth,E1(Critical): is_introduced_to_prove_truth,True,False,False,True,False,True,False,False,True,True
+#78,Gemma-4-31B,78,,,False,True,is_introduced_to_prove_truth,E1(Critical): is_introduced_to_prove_truth,True,False,False,True,False,True,False,False,True,True
+#79,Gemma-4-31B,79,,,False,True,is_introduced_to_prove_truth,E1(Critical): is_introduced_to_prove_truth,True,False,False,True,False,True,False,False,True,True
+#80,Gemma-4-31B,80,,,False,True,is_introduced_to_prove_truth,E1(Critical): is_introduced_to_prove_truth,True,False,False,True,False,True,False,False,True,True
+#84,Gemma-4-31B,84,,,True,False,is_introduced_to_prove_truth,E2(Critical): is_introduced_to_prove_truth,True,False,False,True,True,True,False,False,True,False
+#85,Gemma-4-31B,85,,,False,True,is_introduced_to_prove_truth,E1(Critical): is_introduced_to_prove_truth,True,False,False,True,False,True,False,False,True,True
+#86,Gemma-4-31B,86,,,False,True,is_introduced_to_prove_truth,E1(Critical): is_introduced_to_prove_truth,True,False,False,True,False,True,False,False,True,True
+#91,Gemma-4-31B,91,,,False,True,is_introduced_to_prove_truth,E1(Critical): is_introduced_to_prove_truth,True,False,False,True,False,True,False,False,True,True
